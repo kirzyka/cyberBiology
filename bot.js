@@ -6,7 +6,7 @@ class Bot {
         this.genom = [];
         this.age = 0;
         this.uid = getUID();
-        this.helth = this.MAX_HELTH;
+        this.health = this.MAX_HELTH;
 
         if(!genom) {
             this.genom = [];

@@ -7,6 +7,18 @@ const botCount = 5;
 const botCloneCount = 5;
 const MAX_LOOPS = 100; //20;
 const delayInMilliseconds = 1000; //1 second
+const MAP = [
+    "00000000000000000000",
+    "00P00000000000000000",
+    "000000000XX000000000",
+    "000X00P00XX00000X000",
+    "000X000000000000X000",
+    "000X000000000000X000",
+    "000X00000XX00000X000",
+    "000000000XX000E00000",
+    "000000000E0000000000",
+    "00000000000000000000",
+];
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
@@ -30,6 +42,26 @@ function drawBoard() {
 function drawCell(col, row, color) {
     context.fillStyle = color;
     context.fillRect(p + (col * cellSize) + 0.5, p + (row * cellSize) + 0.5, cellSize, cellSize);
+}
+
+function drawMap() {
+    for (i = 0; i < MAP.length; i++) {
+        const row = MAP[i].split("");
+
+        for (j = 0; j < row.length; j++) {
+            switch (row[j]) {
+                case "P":
+                    drawCell(j, i, "red");
+                    break;
+                case "E":
+                    drawCell(j, i, "green");
+                    break;
+                case "X":
+                    drawCell(j, i, "grey");
+                    break;
+            }
+        }
+    }
 }
 
 function drawBots() {
@@ -106,7 +138,8 @@ function loop() {
     processing();
     context.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
-    drawBots();
+    drawMap();
+    //drawBots();
 
     loops++;
 
