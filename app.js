@@ -90,13 +90,13 @@ function moveBot(cmd, botInfo, idx) {
         { col: -1, row: 0 }
     ];
     const newCol = botInfo.col + moves[cmd].col;
-    const newRow = botInfo.roe + moves[cmd].row;
+    const newRow = botInfo.row + moves[cmd].row;
 
-    if (newCol > -1 && newRow > -1 && newCol < 20 && newRow < 10 &&
-        bots.some((item) => item.col !== newCol && item.row !== newRow)) {
+    if (newCol > -1 && newRow > -1 && newCol < 20 && newRow < 10
+        && bots.some((item) => item.col !== newCol && item.row !== newRow)
+        && botInfo.bot.health > 0) {
         botInfo.col = newCol;
         botInfo.row = newRow;
-        console.log(botInfo);
         bots[idx] = botInfo;
     }
 }
@@ -119,7 +119,6 @@ function loop() {
 
 init();
 loop();
-console.log(bots);
 
 
 
