@@ -1,22 +1,26 @@
-class Bot {    
-    COMMANDS_COUNT = 64;
-    MAX_HELTH = 100;
+const BOT_COMMANDS_COUNT = 64;
+const BOT_MAX_HELTH = 100;
 
-    constructor(genom) {        
+class Bot {
+
+    constructor(genom) {
         this.genom = [];
         this.age = 0;
-        this.uid = getUID();
-        this.health = this.MAX_HELTH;
+        this.id = getID();
+        this.uid = getID();
+        this.health = BOT_MAX_HELTH;
+        this.cmdPos = 0;
+        this.rotation = getRandomInt(0, 7);
 
-        if(!genom) {
+        if (!genom) {
             this.genom = [];
-            for(let i = 0; i < this.COMMANDS_COUNT; i++) {
-                this.genom.push(getRandomInt(0, this.COMMANDS_COUNT-1));
+            for (let i = 0; i < BOT_COMMANDS_COUNT; i++) {
+                this.genom.push(getRandomInt(0, BOT_COMMANDS_COUNT - 1)); // generate genom
             }
-        } else  {
-            for(let i = 0; i < genom.length; i++) {
-                this.genom.push(genom[i]);
-            } 
+        } else {
+            for (let i = 0; i < genom.length; i++) {
+                this.genom.push(genom[i]); // copy genom
+            }
         }
     }
 
@@ -33,8 +37,8 @@ class Bot {
     }
 
     mutation() {
-        const idx = getRandomInt(0, this.COMMANDS_COUNT-1);
+        const idx = getRandomInt(0, BOT_COMMANDS_COUNT - 1);
         this.mutant = true;
-        this.genom[idx] = getRandomInt(0, this.COMMANDS_COUNT-1);
+        this.genom[idx] = getRandomInt(0, BOT_COMMANDS_COUNT - 1);
     }
 }

@@ -1,39 +1,28 @@
 
-const bw = 800;
-const bh = 400;
-const p = 10;
-const cellSize = 40;
-const botCount = 5;
-const botCloneCount = 5;
+const WORLD_W = 800;
+const WORLD_H = 400;
+const WORLD_P = 10;
+const WORLD_CELL_SIZE = 40;
+const BOT_ONE_TYPE_COUNT = 1;
+const BOT_CLONE_COUNT = 5;
+const BOT_WITH_MUTATION_COUNT = 1;
 const MAX_LOOPS = 100; //20;
 const delayInMilliseconds = 1000; //1 second
-const MAP = [
-    "00000000000000000000",
-    "00P00000000000000000",
-    "000000000XX000000000",
-    "000X00P00XX00000X000",
-    "000X000000000000X000",
-    "000X000000000000X000",
-    "000X00000XX00000X000",
-    "000000000XX000E00000",
-    "000000000E0000000000",
-    "00000000000000000000",
-];
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
-var bots = [];
-var loops = 1;
+let world;
+let loops = 1;
 
 function drawBoard() {
-    for (var x = 0; x <= bw; x += cellSize) {
-        context.moveTo(0.5 + x + p, p);
-        context.lineTo(0.5 + x + p, bh + p);
+    for (var x = 0; x <= WORLD_W; x += WORLD_CELL_SIZE) {
+        context.moveTo(0.5 + x + WORLD_P, WORLD_P);
+        context.lineTo(0.5 + x + WORLD_P, WORLD_H + WORLD_P);
     }
 
-    for (var x = 0; x <= bh; x += cellSize) {
-        context.moveTo(p, 0.5 + x + p);
-        context.lineTo(bw + p, 0.5 + x + p);
+    for (var x = 0; x <= WORLD_W; x += WORLD_CELL_SIZE) {
+        context.moveTo(WORLD_P, 0.5 + x + WORLD_P);
+        context.lineTo(WORLD_W + WORLD_P, 0.5 + x + WORLD_P);
     }
     context.strokeStyle = "black";
     context.stroke();
@@ -41,55 +30,55 @@ function drawBoard() {
 
 function drawCell(col, row, color) {
     context.fillStyle = color;
-    context.fillRect(p + (col * cellSize) + 0.5, p + (row * cellSize) + 0.5, cellSize, cellSize);
+    context.fillRect(WORLD_P + (col * WORLD_CELL_SIZE) + 0.5, WORLD_P + (row * WORLD_CELL_SIZE) + 0.5, WORLD_CELL_SIZE, WORLD_CELL_SIZE);
 }
 
 function drawMap() {
-    for (i = 0; i < MAP.length; i++) {
-        const row = MAP[i].split("");
+    for (i = 0; i < world.map.length; i++) {
+        const row = world.map[i];
 
         for (j = 0; j < row.length; j++) {
             switch (row[j]) {
-                case "P":
+                case POINT_TYPE_POISON:
                     drawCell(j, i, "red");
                     break;
-                case "E":
+                case POINT_TYPE_EAT:
                     drawCell(j, i, "green");
                     break;
-                case "X":
+                case POINT_TYPE_WALL:
                     drawCell(j, i, "grey");
+                    break;
+                case POINT_TYPE_BOT:
+                    drawCell(j, i, "blue");
                     break;
             }
         }
     }
 }
 
-function drawBots() {
-    for (i = 0; i < bots.length; i++) {
-        const botInfo = bots[i];
-        drawCell(botInfo.col, botInfo.row, "blue");
-    }
-}
-
-function getFreePos() {
-    let pos = { col: 0, row: 0 };
-    let free = true;
-
-    do {
-        pos.col = getRandomInt(0, 19);
-        pos.row = getRandomInt(0, 9);
-        free = bots.some((botInfo) => pos.col === botInfo.col && pos.row === botInfo.row);
-    } while (free);
-
-    return pos;
-}
+// --------------------------------
 
 function init() {
-    for (i = 0; i < botCount; i++) {
+    world = new World([
+        "00000000000000000000".split(""),
+        "00P00000000000000000".split(""),
+        "000000000XX000000000".split(""),
+        "000X00P00XX00000X000".split(""),
+        "000X000000000000X000".split(""),
+        "000X000000000000X000".split(""),
+        "000X00000XX00000X000".split(""),
+        "000000000XX000E00000".split(""),
+        "000000000E0000000000".split(""),
+        "00000000000000000000".split(""),
+    ]);
+
+    for (i = 0; i < BOT_ONE_TYPE_COUNT; i++) {
         const bot = new Bot();
-        for (j = 0; j < botCloneCount; j++) {
-            const pos = getFreePos();
-            bots.push({ bot: bot.clone(j === 4), col: pos.col, row: pos.row, comm: 0 });
+        for (j = 0; j < BOT_CLONE_COUNT; j++) {
+            const point = world.getFreePoint();
+
+            point.type = POINT_TYPE_BOT;
+            world.addBot(new BotInfo(bot.clone(j === BOT_CLONE_COUNT - BOT_WITH_MUTATION_COUNT), point));
         }
     }
 }
@@ -135,13 +124,17 @@ function moveBot(cmd, botInfo, idx) {
 
 function loop() {
     console.log('loop', loops);
-    processing();
+
+    //processing();
+    
     context.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
     drawMap();
-    //drawBots();
 
     loops++;
+
+    //world.addEat();
+    //world.addPoison();
 
     if (loops !== MAX_LOOPS) {
         setTimeout(function () {
