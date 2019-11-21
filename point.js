@@ -15,8 +15,16 @@ class Point {
         return this._col;
     }
 
+    set col(value) {
+        this._col = value;
+    }
+
     get row() {
         return this._row;
+    }
+
+    set row(value) {
+        this._row = value;
     }
     
     get type() {

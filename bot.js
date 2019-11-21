@@ -4,31 +4,69 @@ const BOT_MAX_HELTH = 100;
 class Bot {
 
     constructor(genom) {
-        this.genom = [];
-        this.age = 0;
-        this.id = getID();
-        this.uid = getID();
-        this.health = BOT_MAX_HELTH;
-        this.cmdPos = 0;
-        this.rotation = getRandomInt(0, 7);
+        this._genom = [];
+        this._age = 0;
+        this._id = getID();
+        this._uid = getID();
+        this._health = BOT_MAX_HELTH;
+        this._cmdPos = 0;
+        this._rotation = getRandomInt(0, 7);
 
         if (!genom) {
-            this.genom = [];
+            this._genom = [];
             for (let i = 0; i < BOT_COMMANDS_COUNT; i++) {
-                this.genom.push(getRandomInt(0, BOT_COMMANDS_COUNT - 1)); // generate genom
+                this._genom.push(getRandomInt(0, BOT_COMMANDS_COUNT - 1)); // generate genom
             }
         } else {
             for (let i = 0; i < genom.length; i++) {
-                this.genom.push(genom[i]); // copy genom
+                this._genom.push(genom[i]); // copy genom
             }
         }
     }
 
-    clone(withMutation) {
-        const newBot = new Bot(this.genom);
+    get genom() {
+        return this._genom;
+    }
 
-        newBot.uid = this.uid;
-        newBot.age = this.age + 1;
+    get cmdPos() {
+        return this._cmdPos;
+    }
+
+    set cmdPos(value) {
+        this._cmdPos = value;
+    }
+
+    get health() {
+        return this._health;
+    }
+
+    set health(value) {
+        this._health = value;
+    }
+
+    get rotation() {
+        return this._rotation;
+    }
+
+    rotate(value) {
+        this._rotation = (this._rotation + value) % 8;
+    }
+
+    updateHealth(value) {
+        value = value || -1;
+        this._health = this._health + value;
+    }
+
+    updateCmdPos(value) {
+        value = value || 1;
+        this._cmdPos = (this._cmdPos + value) % 64;
+    }
+
+    clone(withMutation) {
+        const newBot = new Bot(this._genom);
+
+        newBot.uid = this._uid;
+        newBot.age = this._age + 1;
 
         if (withMutation) {
             newBot.mutation();
@@ -38,7 +76,7 @@ class Bot {
 
     mutation() {
         const idx = getRandomInt(0, BOT_COMMANDS_COUNT - 1);
-        this.mutant = true;
-        this.genom[idx] = getRandomInt(0, BOT_COMMANDS_COUNT - 1);
+        this._mutant = true;
+        this._genom[idx] = getRandomInt(0, BOT_COMMANDS_COUNT - 1);
     }
 }

@@ -1,13 +1,8 @@
-
-const WORLD_W = 800;
-const WORLD_H = 400;
-const WORLD_P = 10;
-const WORLD_CELL_SIZE = 40;
-const BOT_ONE_TYPE_COUNT = 1;
+const BOT_ONE_TYPE_COUNT = 5;
 const BOT_CLONE_COUNT = 5;
 const BOT_WITH_MUTATION_COUNT = 1;
-const MAX_LOOPS = 100; //20;
-const delayInMilliseconds = 1000; //1 second
+const MAX_LOOPS = 300; //20;
+const LOOP_DELAY = 300; //1 second
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
@@ -49,7 +44,7 @@ function drawMap() {
                     drawCell(j, i, "grey");
                     break;
                 case POINT_TYPE_BOT:
-                    drawCell(j, i, "blue");
+                    drawCell(j, i, "blue");                    
                     break;
             }
         }
@@ -83,63 +78,27 @@ function init() {
     }
 }
 
-function processing() {
-    for (i = 0; i < bots.length; i++) {
-        const botInfo = bots[i];
-        const bot = botInfo.bot;
-        const cmd = bot.genom[botInfo.comm];
-
-        if (cmd < 8) { // move            
-            moveBot(cmd, botInfo, i);
-            bots[i].comm = (botInfo.comm + 1) % 64;
-        } else {
-            botInfo.comm = 0;
-        }
-        
-    }
-}
-
-function moveBot(cmd, botInfo, idx) {
-    const moves = [
-        { col: -1, row: -1 },
-        { col: 0, row: -1 },
-        { col: 1, row: -1 },
-        { col: 1, row: 0 },
-        { col: 1, row: 1 },
-        { col: 0, row: 1 },
-        { col: -1, row: 1 },
-        { col: -1, row: 0 }
-    ];
-    const newCol = botInfo.col + moves[cmd].col;
-    const newRow = botInfo.row + moves[cmd].row;
-
-    if (newCol > -1 && newRow > -1 && newCol < 20 && newRow < 10
-        && bots.some((item) => item.col !== newCol && item.row !== newRow)
-        && botInfo.bot.health > 0) {
-        botInfo.col = newCol;
-        botInfo.row = newRow;
-        bots[idx] = botInfo;
-    }
-}
-
 function loop() {
     console.log('loop', loops);
 
-    //processing();
+    world.processing();
     
     context.clearRect(0, 0, canvas.width, canvas.height);
+    
     drawBoard();
     drawMap();
-
+    
     loops++;
 
-    //world.addEat();
-    //world.addPoison();
+    if (loops % 5 === 0) {
+        world.addToMap(POINT_TYPE_POISON);
+        world.addToMap(POINT_TYPE_EAT);
+    }
 
     if (loops !== MAX_LOOPS) {
         setTimeout(function () {
             loop();
-        }, delayInMilliseconds);
+        }, LOOP_DELAY);
     }
 }
 
