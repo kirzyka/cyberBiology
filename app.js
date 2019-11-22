@@ -1,8 +1,8 @@
-const BOT_ONE_TYPE_COUNT = 5;
-const BOT_CLONE_COUNT = 5;
+const BOT_ONE_TYPE_COUNT = 8;
+const BOT_CLONE_COUNT = 8;
 const BOT_WITH_MUTATION_COUNT = 1;
 const MAX_LOOPS = 300; //20;
-const LOOP_DELAY = 300; //1 second
+const LOOP_DELAY = 100; //0,1 second
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
@@ -41,11 +41,13 @@ function drawMap() {
                     drawCell(j, i, "green");
                     break;
                 case POINT_TYPE_WALL:
-                    drawCell(j, i, "grey");
+                    drawCell(j, i, "#f90");
                     break;
                 case POINT_TYPE_BOT:
                     drawCell(j, i, "blue");                    
                     break;
+                default:
+                    drawCell(j, i, "#ccc");   
             }
         }
     }
@@ -55,16 +57,26 @@ function drawMap() {
 
 function init() {
     world = new World([
-        "00000000000000000000".split(""),
-        "00P00000000000000000".split(""),
-        "000000000XX000000000".split(""),
-        "000X00P00XX00000X000".split(""),
-        "000X000000000000X000".split(""),
-        "000X000000000000X000".split(""),
-        "000X00000XX00000X000".split(""),
-        "000000000XX000E00000".split(""),
-        "000000000E0000000000".split(""),
-        "00000000000000000000".split(""),
+        "00000000000000000000000000000000000000000000000000".split(""),
+        "00000000000000000000000000000000000000000000000000".split(""),
+        "0000P0000000000000000000000000000000000000000P0000".split(""),
+        "00000000000000000000000000000000000000000000000000".split(""),
+        "000000000X000000000000000000000000000000X000000000".split(""),
+        "000000000X00000000000000EE00000000000000X000000000".split(""),
+        "000000000X000000000000000000000000000000X000000000".split(""),
+        "000000000X00000000000000XX00000000000000X000000000".split(""),
+        "000000000000000E00000000XX00000000E000000000000000".split(""),
+        "000000000000000000000000XX000000000000000000000000".split(""),
+        "000000000000000000000000XX000000000000000000000000".split(""),
+        "000000000000000E00000000XX00000000E000000000000000".split(""),
+        "000000000X00000000000000XX00000000000000X000000000".split(""),
+        "000000000X000000000000000000000000000000X000000000".split(""),
+        "000000000X00000000000000EE00000000000000X000000000".split(""),
+        "000000000X000000000000000000000000000000X000000000".split(""),
+        "00000000000000000000000000000000000000000000000000".split(""),
+        "0000P0000000000000000000000000000000000000000P0000".split(""),
+        "00000000000000000000000000000000000000000000000000".split(""),
+        "00000000000000000000000000000000000000000000000000".split("")
     ]);
 
     for (i = 0; i < BOT_ONE_TYPE_COUNT; i++) {
@@ -76,10 +88,12 @@ function init() {
             world.addBot(new BotInfo(bot.clone(j === BOT_CLONE_COUNT - BOT_WITH_MUTATION_COUNT), point));
         }
     }
+
+    world.generation = 1;
 }
 
 function loop() {
-    console.log('loop', loops);
+    // console.log('loop', loops);
 
     world.processing();
     
@@ -92,10 +106,12 @@ function loop() {
 
     if (loops % 5 === 0) {
         world.addToMap(POINT_TYPE_POISON);
+    }
+    if (loops % 2 === 0) {
         world.addToMap(POINT_TYPE_EAT);
     }
 
-    if (loops !== MAX_LOOPS) {
+    if (world._maxAge < 1000) {
         setTimeout(function () {
             loop();
         }, LOOP_DELAY);

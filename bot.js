@@ -6,6 +6,7 @@ class Bot {
     constructor(genom) {
         this._genom = [];
         this._age = 0;
+        this._generation = 1;
         this._id = getID();
         this._uid = getID();
         this._health = BOT_MAX_HELTH;
@@ -34,6 +35,14 @@ class Bot {
 
     set cmdPos(value) {
         this._cmdPos = value;
+    }
+
+    get age() {
+        return this._age;
+    }
+
+    set age(value) {
+        this._age = value;
     }
 
     get health() {
@@ -66,7 +75,8 @@ class Bot {
         const newBot = new Bot(this._genom);
 
         newBot.uid = this._uid;
-        newBot.age = this._age + 1;
+        newBot.generation = this._generation + 1;
+        newBot.cmdPos = 0;
 
         if (withMutation) {
             newBot.mutation();
