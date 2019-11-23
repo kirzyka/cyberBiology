@@ -64,6 +64,9 @@ class Bot {
     updateHealth(value) {
         value = value || -1;
         this._health = this._health + value;
+        if (this._health > 100) {
+            this._health = 100;
+        }
     }
 
     updateCmdPos(value) {

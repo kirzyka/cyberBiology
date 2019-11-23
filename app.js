@@ -2,12 +2,13 @@ const BOT_ONE_TYPE_COUNT = 8;
 const BOT_CLONE_COUNT = 8;
 const BOT_WITH_MUTATION_COUNT = 1;
 const MAX_LOOPS = 300; //20;
-const LOOP_DELAY = 100; //0,1 second
+const LOOP_DELAY = 30; //0,1 second
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 let world;
 let loops = 1;
+let interval;
 
 function drawBoard() {
     for (var x = 0; x <= WORLD_W; x += WORLD_CELL_SIZE) {
@@ -80,7 +81,8 @@ function init() {
     ]);
 
     for (i = 0; i < BOT_ONE_TYPE_COUNT; i++) {
-        const bot = new Bot();
+        const initGenom = [59,0,54,62,9,49,16,39,27,20,20,52,9,8,45,35,13,10,8,34,2,41,8,10,50,31,6,6,20,29,40,23,30,10,11,45,26,35,2,15,22,31,54,1,44,12,5,0,14,0,4,41,57,8,44,25,7,56,44,53,42,36,4,12];
+        const bot = new Bot(initGenom);
         for (j = 0; j < BOT_CLONE_COUNT; j++) {
             const point = world.getFreePoint();
 
@@ -107,14 +109,20 @@ function loop() {
     if (loops % 5 === 0) {
         world.addToMap(POINT_TYPE_POISON);
     }
-    if (loops % 2 === 0) {
+    if (loops % 1 === 0) {
+        world.addToMap(POINT_TYPE_EAT);
         world.addToMap(POINT_TYPE_EAT);
     }
 
+    if (interval) {
+        clearInterval(interval);
+    }
     if (world._maxAge < 1000) {
-        setTimeout(function () {
+        interval = setInterval(function () {
             loop();
         }, LOOP_DELAY);
+    } else {
+        console.log("optimal genom:", world._maxAgeGenom.join(', '));
     }
 }
 

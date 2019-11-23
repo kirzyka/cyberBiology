@@ -24,6 +24,7 @@ class World {
         // stats
         this._generation = 0;
         this._maxAge = 0;
+        this._maxAgeGenom = [];
     }
 
     get map() {
@@ -98,14 +99,17 @@ class World {
             // calc stats
             let genMaxAge = 0;
             this._bots.map((botInfo) => {
-                this._maxAge = Math.max(this._maxAge, botInfo.bot.age);
+                if (this._maxAge < Math.max(this._maxAge, botInfo.bot.age)) {
+                    this._maxAge = Math.max(this._maxAge, botInfo.bot.age);
+                    this._maxAgeGenom = botInfo.bot.genom;
+                }
                 genMaxAge = Math.max(genMaxAge, botInfo.bot.age);
             });
 
             console.log('----------------------------');
             console.log('world maxAge:', this._maxAge);
             console.log('gen maxAge:', genMaxAge);
-            console.log('-> new generation:', this._generation);
+            console.log('new generation:', this._generation);
             console.log('loops:', loops);
 
 
@@ -136,7 +140,6 @@ class World {
                 if (cmd < 8) { // move       
                     targetPointType = this.moveBot(cmd, botInfo, i);
                     this.updateBotCmdPos(bot, targetPointType);
-                    bot.updateHealth();
                     if (targetPointType === POINT_TYPE_POISON) {
                         bot.updateHealth(-bot.health);
                     } else if (targetPointType === POINT_TYPE_EAT) {
@@ -146,24 +149,21 @@ class World {
                 } else if (cmd < 15) { // get 
                     targetPointType = this.getFromCell(cmd, botInfo, i);
                     this.updateBotCmdPos(bot, targetPointType);
-                    bot.updateHealth();
                     stepCount = 10;
                 } else if (cmd < 23) { // look 
                     targetPointType = this.lookAtCell(cmd, botInfo, i);
                     this.updateBotCmdPos(bot, targetPointType);
-                    bot.updateHealth();
                     stepCount++;
                 } else if (cmd < 31) { // rotation 
                     botInfo.bot.rotate(cmd);
                     bot.updateCmdPos();
-                    bot.updateHealth();
                     stepCount++;
                 } else { // goto
-                    bot.updateCmdPos(cmd);
-                    bot.updateHealth();
+                    bot.updateCmdPos(cmd);                    
                     stepCount++;
                 }
-            } while (stepCount < 10 && bot.health > 0)
+            } while (stepCount < 10)
+            bot.updateHealth();
 
             bot.age = bot.age + 1;
 
