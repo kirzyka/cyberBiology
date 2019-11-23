@@ -45,10 +45,10 @@ function drawMap() {
                     drawCell(j, i, "#f90");
                     break;
                 case POINT_TYPE_BOT:
-                    drawCell(j, i, "blue");                    
+                    drawCell(j, i, "blue");
                     break;
                 default:
-                    drawCell(j, i, "#ccc");   
+                    drawCell(j, i, "#ccc");
             }
         }
     }
@@ -81,7 +81,9 @@ function init() {
     ]);
 
     for (i = 0; i < BOT_ONE_TYPE_COUNT; i++) {
-        const initGenom = [59,0,54,62,9,49,16,39,27,20,20,52,9,8,45,35,13,10,8,34,2,41,8,10,50,31,6,6,20,29,40,23,30,10,11,45,26,35,2,15,22,31,54,1,44,12,5,0,14,0,4,41,57,8,44,25,7,56,44,53,42,36,4,12];
+        //const initGenom = [59, 0, 54, 62, 9, 49, 16, 39, 27, 20, 20, 52, 9, 8, 45, 35, 13, 10, 8, 34, 2, 41, 8, 10, 50, 31, 6, 6, 20, 29, 40, 23, 30, 10, 11, 45, 26, 35, 2, 15, 22, 31, 54, 1, 44, 12, 5, 0, 14, 0, 4, 41, 57, 8, 44, 25, 7, 56, 44, 53, 42, 36, 4, 12];
+        const initGenom = [59, 0, 54, 62, 9, 49, 16, 39, 27, 20, 20, 52, 9, 8, 45, 35, 13, 10, 8, 34, 2, 41, 8, 10, 50, 31, 6, 6, 20, 29, 40, 23, 30, 10, 11, 45, 26, 35, 2, 15, 22, 31, 54, 1, 44, 12, 5, 0, 14, 0, 4, 41, 57, 8, 44, 25, 7, 56, 44, 46, 42, 36, 4, 12];
+
         const bot = new Bot(initGenom);
         for (j = 0; j < BOT_CLONE_COUNT; j++) {
             const point = world.getFreePoint();
@@ -92,18 +94,16 @@ function init() {
     }
 
     world.generation = 1;
+    drawBoard();
 }
 
 function loop() {
-    // console.log('loop', loops);
-
     world.processing();
-    
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    
-    drawBoard();
+
+    // context.clearRect(0, 0, canvas.width, canvas.height);
+    // drawBoard();
     drawMap();
-    
+
     loops++;
 
     if (loops % 5 === 0) {
